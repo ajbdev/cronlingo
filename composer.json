@@ -1,12 +1,12 @@
 {
   "name": "ajbdev/cronlingo",
-  "description": "Express and translate crontabs as human readable phrases. Roughly ported from philicali/cronish",
+  "description": "Express crontabs as human readable phrases",
   "minimum-stability": "stable",
   "license": "proprietary",
   "authors": [
     {
       "name": "Andy Baird",
-      "email": "email@example.com"
+      "email": "andybaird@gmail.com"
     }
   ],
   "autoload": {

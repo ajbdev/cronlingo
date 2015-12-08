@@ -10,7 +10,7 @@ class Field
 
     protected $repeats;
 
-    protected $specific = array();
+    protected $specific = [];
 
     protected $rangeMin;
 
@@ -62,9 +62,14 @@ class Field
         $this->rangeMax = $rangeMax;
     }
 
-    public function addSpecific($value)
+    public function setSpecific(array $value)
     {
         $this->specific = $value;
+    }
+
+    public function addSpecific($value)
+    {
+        $this->specific[] = $value;
         $this->specific = array_unique($this->specific);
     }
 
