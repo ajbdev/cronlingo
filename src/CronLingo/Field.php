@@ -6,8 +6,6 @@ namespace CronLingo;
 
 class Field
 {
-    public $value;
-
     protected $repeats;
 
     protected $specific = [];
@@ -16,10 +14,6 @@ class Field
 
     protected $rangeMax;
 
-    public function __construct($defaultValue = '*')
-    {
-        $this->value = $defaultValue;
-    }
 
     public function __toString()
     {
@@ -35,8 +29,9 @@ class Field
             $value .= implode(',', $this->specific);
         }
 
-        if ($this->rangeMin && $this->rangeMax) {
-            $value = $this->rangeMin .'-'.$this->rangeMax;
+        var_dump($this->rangeMin, $this->rangeMax);
+        if ($this->rangeMin >= 0 && $this->rangeMax >= 0) {
+            $value = intval($this->rangeMin).'-'.intval($this->rangeMax);
         }
 
         if (strlen($value) == 0) {
@@ -50,31 +45,77 @@ class Field
     {
         $this->rangeMin = $min;
         $this->rangeMax = $max;
+
+        return $this;
     }
 
     public function setRangeMin($rangeMin)
     {
         $this->rangeMin = $rangeMin;
+
+        return $this;
     }
 
     public function setRangeMax($rangeMax)
     {
         $this->rangeMax = $rangeMax;
+
+        return $this;
     }
 
     public function setSpecific(array $value)
     {
         $this->specific = $value;
+
+        return $this;
     }
 
     public function addSpecific($value)
     {
         $this->specific[] = $value;
         $this->specific = array_unique($this->specific);
+
+        return $this;
     }
 
     public function repeatsOn($interval)
     {
         $this->repeats = intval($interval);
+
+        return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getRepeats()
+    {
+        return $this->repeats;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSpecific()
+    {
+        return $this->specific;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRangeMin()
+    {
+        return $this->rangeMin;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRangeMax()
+    {
+        return $this->rangeMax;
+    }
+
+
 }
