@@ -29,8 +29,8 @@ class Field
             $value .= implode(',', $this->specific);
         }
 
-        var_dump($this->rangeMin, $this->rangeMax);
-        if ($this->rangeMin >= 0 && $this->rangeMax >= 0) {
+        if (!is_null($this->rangeMin) && !is_null($this->rangeMax)
+            && $this->rangeMin >= 0 && $this->rangeMax >= 0) {
             $value = intval($this->rangeMin).'-'.intval($this->rangeMax);
         }
 
@@ -39,6 +39,12 @@ class Field
         }
 
         return $value;
+    }
+
+    public function isDirty()
+    {
+        return !is_null($this->repeats) || !is_null($this->rangeMin)
+            || !is_null($this->rangeMax) || count($this->specific) > 0;
     }
 
     public function setRange($min, $max)

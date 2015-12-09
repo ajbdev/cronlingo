@@ -4,7 +4,7 @@
 namespace CronLingo;
 
 
-class ParseException extends \Exception
+class ParseException extends \RuntimeException
 {
 
 }

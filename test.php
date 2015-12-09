@@ -9,4 +9,5 @@ $parser = new Parser();
 array_shift($argv);
 
 
-$parser->parse(implode(' ', $argv));
+echo $parser->parse(implode(' ', $argv)) . PHP_EOL;
+

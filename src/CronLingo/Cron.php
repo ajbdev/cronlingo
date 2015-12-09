@@ -21,13 +21,19 @@ class Cron
         $this->minute = new Field();
     }
 
+    public function ordered()
+    {
+        return [
+            $this->minute,
+            $this->hour,
+            $this->dayOfMonth,
+            $this->month,
+            $this->dayOfWeek
+        ];
+    }
+
     public function __toString()
     {
-        return  $this->minute . ' ' .
-                $this->hour . ' ' .
-                $this->dayOfMonth . ' ' .
-                $this->month . ' ' .
-                $this->dayOfWeek
-        ;
+        return trim(implode(' ', $this->ordered()));
     }
 }

@@ -7,17 +7,13 @@ namespace CronLingo;
 
 class Parser
 {
-
-
-
-
     protected $tokenMap = [
         'every|daily|weekly|monthly' => 'T_EVERY',
         '\d{1,2}:\d{2}(?:am|pm)?'   =>  'T_EXACTTIME',
-        '\d{1,2}(?:am|pm)'          =>  'T_EXACTTIME',
+        '\d{1,2}(?:am|pm|a|p)'          =>  'T_EXACTTIME',
         '(?:am|pm)'             =>  'T_MERIDIEM',
         '\d+[st|th|rd|nd]?[^:]?|other|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth' => 'T_INTERVAL',
-        'second|minute|hour|day|month|year?' => 'T_FIELD',
+        'second|minute|hour|day|month?' => 'T_FIELD',
         'sunday|monday|tuesday|wednesday|thursday|friday|saturday' => 'T_DAYOFWEEK',
         'noon|midnight' =>  'T_TIMEOFDAY',
         'on|at' =>  'T_ONAT',
@@ -40,7 +36,7 @@ class Parser
     ];
     protected $intervalMap = [
         'second' => 2, 'third' => 3, 'fourth' => 4, 'fifth' => 5, 'sixth' => 6, 'seventh' => 7,
-        'eighth' => 8, 'ninth' => 9, 'tenth' => 10
+        'eighth' => 8, 'ninth' => 9, 'tenth' => 10, 'other' => 2
     ];
     protected $timeOfDayMap = [
         'noon'  =>  12, 'midnight'  =>  0
@@ -69,12 +65,37 @@ class Parser
     {
         $this->tokens = $this->lex($value);
 
-        $this->cron = new Cron();
-
-        $this->position = 0;
+        $this->reset();
         $this->evaluate();
 
         return (string) $this->cron;
+    }
+
+    public function reset()
+    {
+        $this->cron = new Cron();
+
+        $this->position = 0;
+    }
+
+    /**
+     * For simple expressions, zero out the time so the cron
+     * matches user expectation and does not execute constantly.
+     *
+     * E.g., someone would not expect "Every day on Tuesday"
+     * to run for every minute and hour on Tuesday.
+     *
+     * @param $field
+     */
+    protected function nilTime($field) {
+        $order = array_search($field, $this->cron->ordered());
+
+        if ($order > 1 && !$this->cron->hour->isDirty()) {
+            $this->cron->hour->addSpecific(0);
+        }
+        if ($order > 0 && !$this->cron->minute->isDirty()) {
+            $this->cron->minute->addSpecific(0);
+        }
     }
 
     protected function evaluate()
@@ -85,6 +106,7 @@ class Parser
 
         $token = $this->current()['token'];
         $value = $this->current()['value'];
+
 
         switch ($token) {
             case 'T_EVERY':
@@ -100,24 +122,32 @@ class Parser
                     $meridiem = $this->next()['value'];
                 }
 
-
                 @list($hours, $minutes) = explode(':', $value);
                 if (!$minutes) $minutes = '0';
 
-                if ($meridiem == 'pm' || strpos($value, 'pm') !== false) {
+                if ($meridiem == 'pm' || strpos($value, 'pm') || strpos($value, 'p') !== false) {
                     $hours += 12;
                 }
 
-                $this->cron->hour->addSpecific(intval($hours));
-                $this->cron->minute->addSpecific(intval($minutes));
+                if ($this->is($this->previous(), 'T_ONAT')) {
+                    $this->cron->hour->setSpecific([intval($hours)]);
+                    $this->cron->minute->setSpecific([intval($minutes)]);
+                } else {
+                    $this->cron->hour->addSpecific(intval($hours));
+                    $this->cron->minute->addSpecific(intval($minutes));
+                }
+
                 break;
             case 'T_WEEKDAYWEEKEND':
                 $this->expects($this->previous(),array('T_ONAT'));
                 $this->cron->dayOfWeek->setSpecific($this->weekdayWeekendMap[$value]);
+                $this->nilTime($this->cron->dayOfWeek);
                 break;
             case 'T_DAYOFWEEK':
                 $this->expects($this->previous(),array('T_ONAT','T_INTERVAL','T_EVERY','T_DAYOFWEEK'));
                 $this->cron->dayOfWeek->addSpecific($this->dayOfWeekMap[$value]);
+
+                $this->nilTime($this->cron->dayOfWeek);
                 break;
             case 'T_TO':
                 $this->expects($this->next(),'T_INTERVAL');
@@ -127,17 +157,24 @@ class Parser
                 $this->expects($this->previous(),array('T_ONAT'));
 
                 $this->cron->hour->addSpecific($this->timeOfDayMap[$value]);
+                $this->cron->minute->addSpecific(0);
                 break;
             case 'T_MONTH':
                 $this->expects($this->previous(),array('T_ONAT','T_IN'));
 
                 $this->cron->month->addSpecific($this->monthMap[$value]);
+
+                $this->nilTime($this->cron->month);
                 break;
             case 'T_FIELD':
                 $this->expects($this->previous(),array('T_INTERVAL','T_EVERY'));
 
                 if (isset($this->fieldMap[$value])) {
-                    $value = $this->fieldMap[$value];
+                    if ($this->is($this->previous(), 'T_INTERVAL')) {
+                        $value = $this->fieldMap[$value];
+                    } else {
+                        break;
+                    }
                 }
 
                 $field = $this->cron->{$value};
@@ -148,14 +185,15 @@ class Parser
                     $field->setRange($this->previous(3)['value'], $this->previous()['value']);
                 } else if ($this->is($this->previous(), 'T_INTERVAL')) {
                     $previous = $this->previous()['value'];
-                    if ($previous === 'other') {
-                        $field->repeatsOn(2);
-                    } else if (isset($this->intervalMap[$previous])) {
-                        $field->addSpecific($this->intervalMap[$previous]);
-                    } else {
-                        $field->addSpecific((int) $previous);
-                    }
+
+                    $method = $this->is($this->previous(2), 'T_EVERY') ? 'repeatsOn' : 'addSpecific';
+
+                    $amt = isset($this->intervalMap[$previous]) ? $this->intervalMap[$previous] : intval($previous);
+
+                    $field->{$method}($amt);
                 }
+
+                $this->nilTime($field);
 
                 break;
             default:
