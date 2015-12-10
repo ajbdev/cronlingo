@@ -183,7 +183,7 @@ class Parser
                     $this->expects($this->previous(3),array('T_INTERVAL'));
                     // Range
                     $field->setRange($this->previous(3)['value'], $this->previous()['value']);
-                } else if ($this->is($this->previous(), 'T_INTERVAL')) {
+                } else if ($this->is($this->previous(), array('T_INTERVAL','T_EVERY'))) {
                     $previous = $this->previous()['value'];
 
                     $method = $this->is($this->previous(2), 'T_EVERY') ? 'repeatsOn' : 'addSpecific';

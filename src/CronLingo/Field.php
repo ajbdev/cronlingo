@@ -24,7 +24,7 @@ class Field
 
         if (count($this->specific) > 0) {
             if (strlen($value) > 0) {
-                $value = ',';
+                $value .= ',';
             }
             $value .= implode(',', $this->specific);
         }
@@ -89,38 +89,6 @@ class Field
         $this->repeats = intval($interval);
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRepeats()
-    {
-        return $this->repeats;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSpecific()
-    {
-        return $this->specific;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRangeMin()
-    {
-        return $this->rangeMin;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRangeMax()
-    {
-        return $this->rangeMax;
     }
 
 

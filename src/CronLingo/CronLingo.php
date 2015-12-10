@@ -17,8 +17,14 @@ class CronLingo
      */
     public static function cron($string)
     {
-        $parser = new Parser();
+        return self::getParser()->parse($string);
+    }
 
-        return $parser->parse($string);
+    /**
+     * @return Parser
+     */
+    public static function getParser()
+    {
+        return new Parser();
     }
 }

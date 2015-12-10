@@ -34,6 +34,16 @@ class FieldTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1,2,3,4', (string) $field);
     }
 
+    public function testRepeatsWithSpecific()
+    {
+        $field = new \CronLingo\Field();
+
+        $field->repeatsOn(2)
+              ->addSpecific(5);
+
+        $this->assertEquals('*/2,5', (string) $field);
+    }
+
     public function testRange()
     {
         $field = new \CronLingo\Field();

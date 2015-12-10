@@ -151,10 +151,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
     {
         $parser = $this->getParser();
 
-//        $this->assertEquals(
-//            '0 * * 1 *',
-//            $parser->parse('Every hour in January')
-//        );
+        $this->assertEquals(
+            '0 * * 1 *',
+            $parser->parse('Every hour in January')
+        );
     }
 
 
