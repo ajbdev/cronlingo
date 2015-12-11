@@ -13,5 +13,11 @@
     "psr-4": {
       "CronLingo\\": "src/CronLingo/"
     }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0"
+  },
+  "requires": {
+    "php": ">=5.4.0"
   }
 }
