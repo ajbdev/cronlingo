@@ -162,9 +162,15 @@ class Parser
                     $meridiem = $this->next()['value'];
                 }
 
-                @list($hours, $minutes) = explode(':', $value);
-                if (!$minutes) {
-                    $minutes = '0';
+                $hours = $minutes = 0;
+
+                $parts = explode(':', $value);
+                if (isset($parts[0])) {
+                    $hours = $parts[0];
+                }
+
+                if (isset($parts[1])) {
+                    $minutes = $parts[1];
                 }
 
                 if ($meridiem == 'pm' || strpos($value, 'pm') || strpos($value, 'p') !== false) {
