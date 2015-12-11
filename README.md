@@ -26,6 +26,7 @@ CronLingo identifies the parts of a string with specific time-related keywords s
 Here's a brief list of things that it will pick up and parse into a crontab:
 - Periods (daily, weekly, monthly)
 - Exact times (9:30 PM, 8a, 3p)
+- Meridiems (AM/PM/A/P)
 - Intervals (1st, second, other, ninth, etc)
 - Specific fields (second, minute, hour, day, month)
 - Day of week (sunday, monday, etc)
@@ -33,8 +34,7 @@ Here's a brief list of things that it will pick up and parse into a crontab:
 - Lists (e.g., 5 to 12 minutes)
 - Month names (january, february, etc)
 - Weekend / weekday
-- 
-- Meridiems (AM/PM/A/P)
+
 
 ## What's a cron tab?
 A cron tab is an expression that defines a recurring period of time.
