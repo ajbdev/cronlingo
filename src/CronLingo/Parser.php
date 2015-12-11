@@ -271,7 +271,7 @@ class Parser
     /**
      * Enforce expectations of a certain token
      *
-     * @param $token
+     * @param boolean $token
      * @param $types
      */
     public function expects($token, $types)
