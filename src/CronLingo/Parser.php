@@ -102,7 +102,7 @@ class Parser
         $this->reset();
         $this->evaluate();
 
-        return (string)$this->cron;
+        return (string) $this->cron;
     }
 
     /**
