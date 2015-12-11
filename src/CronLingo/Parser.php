@@ -314,11 +314,7 @@ class Parser
      */
     protected function next($skip = 1)
     {
-        if (isset($this->tokens[$this->position + $skip])) {
-            return $this->tokens[$this->position + $skip];
-        }
-
-        return false;
+        return $this->seek($this->position + $skip);
     }
 
     /**
@@ -329,8 +325,19 @@ class Parser
      */
     protected function previous($skip = 1)
     {
-        if (isset($this->tokens[$this->position - $skip])) {
-            return $this->tokens[$this->position - $skip];
+        return $this->seek($this->position - $skip);
+    }
+
+    /**
+     * Seek a specific token
+     *
+     * @param $index
+     * @return bool
+     */
+    protected function seek($index)
+    {
+        if (isset($this->tokens[$index])) {
+            return $this->tokens[$index];
         }
 
         return false;
