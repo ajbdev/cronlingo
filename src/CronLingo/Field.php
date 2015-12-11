@@ -52,7 +52,7 @@ class Field
 
         if (!is_null($this->rangeMin) && !is_null($this->rangeMax)
             && $this->rangeMin >= 0 && $this->rangeMax >= 0) {
-            $value = intval($this->rangeMin).'-'.intval($this->rangeMax);
+            $value = intval($this->rangeMin) . '-' . intval($this->rangeMax);
         }
 
         if (strlen($value) == 0) {
