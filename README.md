@@ -4,6 +4,7 @@ CRON Lingo takes a string about the recurrence of time and turns it into CRON ta
 
 Examples:
 
+```php
 echo CronLingo::fromExpression('Every day at midnight');
 // "0 0 * * *"
 
@@ -18,3 +19,4 @@ echo CronLingo::fromExpression('The 1st day in April at midnight');
 
 echo CronLingo::fromExpression('Every day on the weekday at 2:25pm');
 // "25 14 * * 1,2,3,4,5"
+```
