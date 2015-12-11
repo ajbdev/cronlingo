@@ -10,11 +10,11 @@ echo CronLingo::fromExpression('Every day at midnight');
 echo CronLingo::fromExpression('Every 15 minutes at midnight on the weekend');
 // "*/15 0 * * 0,6"
 
-echo CronLingo::fromExpression('Every other minute in July at noon on the weekday');
-// "*/2 12 * 7 1,2,3,4,5"
+echo CronLingo::fromExpression('Every other minute in August at noon on the weekday');
+// "*/2 12 * 8 1,2,3,4,5"
 
-echo CronLingo::fromExpression('Every 1st day in April at midnight');
+echo CronLingo::fromExpression('The 1st day in April at midnight');
 // "0 0 1 4 *"
 
 echo CronLingo::fromExpression('Every day on the weekday at 2:25pm');
-// "30 3 * * 1,2,3,4,5"
+// "25 14 * * 1,2,3,4,5"

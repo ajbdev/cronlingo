@@ -14,6 +14,16 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         return $this->parser;
     }
 
+    public function testParseException()
+    {
+        $this->setExpectedException('CronLingo\ParseException');
+
+        $parser = $this->getParser();
+        $token = array('token' => 'T_EVERY');
+
+        $parser->expects($token, 'T_ONAT');
+    }
+
 
     public function testEvery()
     {
@@ -37,7 +47,11 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             '0 13 * * *',
             $parser->parse('Every day at 1p')
+        );
 
+        $this->assertEquals(
+            '0 14,15,5 * * *',
+            $parser->parse('Every day at 2p, 3pm, and 5am')
         );
     }
 
@@ -154,6 +168,46 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             '0 * * 1 *',
             $parser->parse('Every hour in January')
+        );
+    }
+
+    public function testWeekdayWeekend()
+    {
+        $parser = $this->getParser();
+
+        $this->assertEquals(
+            '0 0 * * 0,6',
+            $parser->parse('Every day on the weekend')
+        );
+
+        $this->assertEquals(
+            '0 0 * * 1,2,3,4,5',
+            $parser->parse('Every weekday')
+        );
+    }
+
+    public function testComprehensiveStrings()
+    {
+        $parser = $this->getParser();
+
+        $this->assertEquals(
+            '*/15 0 * * 0,6',
+            $parser->parse('Every 15 minutes at midnight on the weekend')
+        );
+
+        $this->assertEquals(
+            '*/2 12 * 8 1,2,3,4,5',
+            $parser->parse('Every other minute in August at noon on the weekday')
+        );
+
+        $this->assertEquals(
+            '0 0 1 4 *',
+            $parser->parse('The 1st day in April at midnight')
+        );
+
+        $this->assertEquals(
+            '25 14 * * 1,2,3,4,5',
+            $parser->parse('Every day on the weekday at 2:25pm')
         );
     }
 
