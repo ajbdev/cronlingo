@@ -12,7 +12,7 @@ sudo: false
 
 install: travis_retry composer install --no-interaction --prefer-source
 
-script: phpunit --coverage-text --colors=auto
+script: phpunit --coverage-text --colors
 
 matrix:
   fast_finish: true
