@@ -15,7 +15,7 @@ class CronLingo
      * @param $string
      * @return string
      */
-    public static function cron($string)
+    public static function fromExpression($string)
     {
         return self::getParser()->parse($string);
     }
