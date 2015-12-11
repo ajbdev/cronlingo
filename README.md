@@ -1,3 +1,5 @@
+![travis][https://travis-ci.org/ajbdev/cronlingo.svg]
+
 # CRON Lingo
 
 CronLingo turns human readable strings about time and turns them into valid crontabs. 
