@@ -1,4 +1,4 @@
-![travis][https://travis-ci.org/ajbdev/cronlingo.svg]
+https://travis-ci.org/ajbdev/cronlingo.svg
 
 # CRON Lingo
 
