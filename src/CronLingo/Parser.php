@@ -163,7 +163,9 @@ class Parser
                 }
 
                 @list($hours, $minutes) = explode(':', $value);
-                if (!$minutes) $minutes = '0';
+                if (!$minutes) {
+                    $minutes = '0';
+                }
 
                 if ($meridiem == 'pm' || strpos($value, 'pm') || strpos($value, 'p') !== false) {
                     $hours += 12;
@@ -259,7 +261,9 @@ class Parser
      */
     protected function is($token, $types)
     {
-        if (!is_array($types)) $types = array($types);
+        if (!is_array($types)) {
+            $types = array($types);
+        }
 
         if (false !== $token) {
             return in_array($token['token'], $types);
@@ -271,12 +275,14 @@ class Parser
     /**
      * Enforce expectations of a certain token
      *
-     * @param boolean $token
+     * @param $token
      * @param $types
      */
     public function expects($token, $types)
     {
-        if (!is_array($types)) $types = array($types);
+        if (!is_array($types)) {
+            $types = array($types);
+        }
 
         if (!$this->is($token, $types)) {
             $t = isset($token['token']) ? $token['token'] : 'NULL';
