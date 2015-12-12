@@ -2,3 +2,4 @@
 vendor
 tmp
 build
+composer.lock
