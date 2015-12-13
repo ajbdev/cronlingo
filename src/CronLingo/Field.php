@@ -63,6 +63,29 @@ class Field
     }
 
     /**
+     * @param $val
+     */
+    public function fromCronValue($val)
+    {
+        $parts = explode(',',$val);
+
+        foreach ($parts as $part) {
+            if (false !== strstr($part, '/')) {
+                preg_match('/\*\/(\d+)/', $part, $matches);
+
+                if (isset($matches[1])) {
+                    $this->repeatsOn(intval($matches[1]));
+                }
+            } else if (false !== strstr($part, '-')) {
+                $ranges = explode('-', $part);
+                $this->setRange(intval($ranges[0]), intval($ranges[1]));
+            } else if (is_numeric($part)) {
+                $this->addSpecific(intval($part));
+            }
+        }
+    }
+
+    /**
      * @return bool
      */
     public function isDirty()
@@ -140,5 +163,36 @@ class Field
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getRepeats()
+    {
+        return $this->repeats;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSpecific()
+    {
+        return $this->specific;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRangeMin()
+    {
+        return $this->rangeMin;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRangeMax()
+    {
+        return $this->rangeMax;
+    }
 
 }

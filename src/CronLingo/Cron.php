@@ -32,13 +32,22 @@ class Cron
      */
     public $minute;
 
-    public function __construct()
+    /**
+     * @var string
+     */
+    protected $whitespace = ' ';
+
+    public function __construct($string = null)
     {
         $this->dayOfWeek = new Field();
         $this->month = new Field();
         $this->dayOfMonth = new Field();
         $this->hour = new Field();
         $this->minute = new Field();
+
+        if ($string) {
+            $this->fromString($string);
+        }
     }
 
     /**
@@ -58,10 +67,36 @@ class Cron
     }
 
     /**
+     * Create CRON object from a crontab string
+     *
+     * @param $string
+     */
+    public function fromString($string)
+    {
+        list($minute, $hour, $dayOfMonth, $month, $dayOfWeek) = preg_split('/\s+/', $string);
+
+        $this->minute->fromCronValue($minute);
+        $this->hour->fromCronValue($hour);
+        $this->dayOfMonth->fromCronValue($dayOfMonth);
+        $this->month->fromCronValue($month);
+        $this->dayOfWeek->fromCronValue($dayOfWeek);
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
-        return trim(implode(' ', $this->ordered()));
+        return trim(implode($this->whitespace, $this->ordered()));
     }
+
+    /**
+     * @param string $whitespace
+     */
+    public function setWhitespace($whitespace)
+    {
+        $this->whitespace = $whitespace;
+    }
+
+
 }

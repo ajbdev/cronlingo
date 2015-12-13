@@ -134,6 +134,7 @@ class Parser
         if ($order > 0 && !$this->cron->minute->isDirty()) {
             $this->cron->minute->addSpecific(0);
         }
+
     }
 
     /**
