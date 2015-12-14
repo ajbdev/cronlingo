@@ -16,7 +16,7 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
         $expression = new Expression($cron);
 
         $this->assertEquals(
-            '',
+            'Every day at 12:30 AM',
             (string) $expression
         );
     }

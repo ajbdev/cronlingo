@@ -310,7 +310,7 @@ class Parser
      */
     protected function compileRegex()
     {
-        $regex = '~(' . implode(')|(', array_keys(FieldMap::$tokenMap)) . ')~iA';
+        $regex = '~(' . implode(')|(', array_keys($this->tokenMap)) . ')~iA';
         return $regex;
     }
 
@@ -332,7 +332,7 @@ class Parser
             if (preg_match($regex, $fragment, $matches)) {
                 foreach ($matches as $offset => $val) {
                     if (!empty($val) && $offset > 0) {
-                        $token = array_values(FieldMap::$tokenMap)[$offset - 1];
+                        $token = array_values($this->tokenMap)[$offset - 1];
 
                         $tokens[] = array(
                             'token' => $token,

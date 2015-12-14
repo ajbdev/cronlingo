@@ -27,14 +27,25 @@ class Expression
 
     public function express()
     {
+        $date = $this->date(
+            $this->cron->month,
+            $this->cron->dayOfWeek,
+            $this->cron->dayOfMonth
+        );
 
+        $time = $this->time(
+            $this->cron->hour,
+            $this->cron->minute
+        );
 
-        return $expression;
+        return $date . ' ' . $time;
     }
 
     public function date(Field $month, Field $dayOfWeek, Field $dayOfMonth)
     {
-
+        if (!$month->isDirty() && !$dayOfWeek->isDirty() && !$dayOfMonth->isDirty()) {
+            return 'Every day';
+        }
     }
 
     public function time(Field $hour, Field $minute)
@@ -43,8 +54,8 @@ class Expression
 
         if (count($hour->getSpecific()) == 1 && count($minute->getSpecific()) == 1) {
             $hr = $hour->getSpecific()[0];
-            $min = $hour->getSpecific()[0];
-            $min = str_pad($min, 2);
+            $min = $minute->getSpecific()[0];
+            $min = str_pad($min, 2, 0, STR_PAD_LEFT);
 
             $meridiem = 'AM';
             if ($hr > 12) {
