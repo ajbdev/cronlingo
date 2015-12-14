@@ -32,47 +32,6 @@ class Parser
     ];
 
     /**
-     * @var array
-     */
-    protected $fieldMap = [
-        'day' => 'dayOfMonth'
-    ];
-    /**
-     * @var array
-     */
-    protected $dayOfWeekMap = [
-        'sunday' => 0, 'monday' => 1, 'tuesday' => 2, 'wednesday' => 3,
-        'thursday' => 4, 'friday' => 5, 'saturday' => 6
-    ];
-    /**
-     * @var array
-     */
-    protected $monthMap = [
-        'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4, 'may' => 5, 'june' => 6,
-        'july' => 7, 'august' => 8, 'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12
-    ];
-    /**
-     * @var array
-     */
-    protected $intervalMap = [
-        'second' => 2, 'third' => 3, 'fourth' => 4, 'fifth' => 5, 'sixth' => 6, 'seventh' => 7,
-        'eighth' => 8, 'ninth' => 9, 'tenth' => 10, 'other' => 2
-    ];
-    /**
-     * @var array
-     */
-    protected $timeOfDayMap = [
-        'noon' => 12, 'midnight' => 0
-    ];
-    /**
-     * @var array
-     */
-    protected $weekdayWeekendMap = [
-        'weekday' => array(1, 2, 3, 4, 5),
-        'weekend' => array(0, 6)
-    ];
-
-    /**
      * @var int
      */
     protected $position;
@@ -189,12 +148,12 @@ class Parser
                 break;
             case 'T_WEEKDAYWEEKEND':
                 $this->expects($this->previous(), array('T_ONAT', 'T_EVERY'));
-                $this->cron->dayOfWeek->setSpecific($this->weekdayWeekendMap[$value]);
+                $this->cron->dayOfWeek->setSpecific(FieldMap::$weekdayWeekendMap[$value]);
                 $this->nilTime($this->cron->dayOfWeek);
                 break;
             case 'T_DAYOFWEEK':
                 $this->expects($this->previous(), array('T_ONAT', 'T_INTERVAL', 'T_EVERY', 'T_DAYOFWEEK'));
-                $this->cron->dayOfWeek->addSpecific($this->dayOfWeekMap[$value]);
+                $this->cron->dayOfWeek->addSpecific(FieldMap::$dayOfWeekMap[$value]);
 
                 $this->nilTime($this->cron->dayOfWeek);
                 break;
@@ -205,22 +164,22 @@ class Parser
             case 'T_TIMEOFDAY':
                 $this->expects($this->previous(), array('T_ONAT'));
 
-                $this->cron->hour->setSpecific([$this->timeOfDayMap[$value]]);
+                $this->cron->hour->setSpecific([FieldMap::$timeOfDayMap[$value]]);
                 $this->nilTime($this->cron->hour);
                 break;
             case 'T_MONTH':
                 $this->expects($this->previous(), array('T_ONAT', 'T_IN'));
 
-                $this->cron->month->addSpecific($this->monthMap[$value]);
+                $this->cron->month->addSpecific(FieldMap::$monthMap[$value]);
 
                 $this->nilTime($this->cron->month);
                 break;
             case 'T_FIELD':
                 $this->expects($this->previous(), array('T_INTERVAL', 'T_EVERY'));
 
-                if (isset($this->fieldMap[$value])) {
+                if (isset(FieldMap::$fieldMap[$value])) {
                     if ($this->is($this->previous(), 'T_INTERVAL')) {
-                        $value = $this->fieldMap[$value];
+                        $value = FieldMap::$fieldMap[$value];
                     } else {
                         break;
                     }
@@ -241,7 +200,7 @@ class Parser
                     } else {
                         $method = $this->is($this->previous(2), 'T_EVERY') ? 'repeatsOn' : 'addSpecific';
 
-                        $amt = isset($this->intervalMap[$previous]) ? $this->intervalMap[$previous] : intval($previous);
+                        $amt = isset(FieldMap::$intervalMap[$previous]) ? FieldMap::$intervalMap[$previous] : intval($previous);
                     }
 
                     $field->{$method}($amt);
@@ -351,7 +310,7 @@ class Parser
      */
     protected function compileRegex()
     {
-        $regex = '~(' . implode(')|(', array_keys($this->tokenMap)) . ')~iA';
+        $regex = '~(' . implode(')|(', array_keys(FieldMap::$tokenMap)) . ')~iA';
         return $regex;
     }
 
@@ -373,7 +332,7 @@ class Parser
             if (preg_match($regex, $fragment, $matches)) {
                 foreach ($matches as $offset => $val) {
                     if (!empty($val) && $offset > 0) {
-                        $token = array_values($this->tokenMap)[$offset - 1];
+                        $token = array_values(FieldMap::$tokenMap)[$offset - 1];
 
                         $tokens[] = array(
                             'token' => $token,
