@@ -27,46 +27,53 @@ class Expression
 
     public function express()
     {
-        $date = $this->date(
-            $this->cron->month,
-            $this->cron->dayOfWeek,
-            $this->cron->dayOfMonth
-        );
+        $timeParts = [
+            $this->field('hour', $this->cron->hour),
+            $this->field('minute', $this->cron->minute)
+        ];
 
-        $time = $this->time(
-            $this->cron->hour,
-            $this->cron->minute
-        );
-
-        return $date . ' ' . $time;
+        return '';
     }
 
-    public function date(Field $month, Field $dayOfWeek, Field $dayOfMonth)
+    public function date(Field $dayOfWeek, Field $dayOfMonth, Field $month)
     {
-        if (!$month->isDirty() && !$dayOfWeek->isDirty() && !$dayOfMonth->isDirty()) {
-            return 'Every day';
-        }
-    }
+        $parts = array(
+            'dayOfMonth' => $this->field($dayOfMonth),
+            'dayOfWeek' => $this->field($dayOfWeek, FieldMap::$dayOfWeekMap),
+            'month' => $this->field($month, FieldMap::$monthMap),
+        );
 
-    public function time(Field $hour, Field $minute)
-    {
         $fragment = '';
 
-        if (count($hour->getSpecific()) == 1 && count($minute->getSpecific()) == 1) {
-            $hr = $hour->getSpecific()[0];
-            $min = $minute->getSpecific()[0];
-            $min = str_pad($min, 2, 0, STR_PAD_LEFT);
-
-            $meridiem = 'AM';
-            if ($hr > 12) {
-                $hr-=12;
-                $meridiem = 'PM';
-            }
-
-            $fragment = 'at ' . $hr . ':' . $min . ' ' . $meridiem;
+        foreach ($parts as $part => $piece) {
+            
         }
 
-        return $fragment;
+
+    }
+
+    public function time(Field $hour, Field $minute) {
+
+    }
+
+    public function field(Field $field, $map = array())
+    {
+        $parts = array();
+        if (count($field->getSpecific()) > 0) {
+            $parts['specific'] = array();
+            $map = array_flip($map);
+            foreach ($field->getSpecific() as $spec) {
+                $parts['specific'] = isset($map[$spec]) ? $map[$spec] : $spec;
+            }
+        }
+        if ($field->getRangeMin() && $field->getRangeMax()) {
+            $parts['range'] = $field->getRangeMin() . ' to ' . $field->getRangeMax();
+        }
+        if ($field->getRepeats()) {
+            $parts['repeats'] = $field->getRepeats();
+        }
+
+        return $parts;
     }
 
     public function __toString()
